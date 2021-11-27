@@ -1,0 +1,9 @@
+.updt{
+    padding: 0px 0px 0px 0px;
+    border: solid rgb(19, 167, 226);
+    color: white;
+    background-color: rgb(19, 167, 226);
+    border-radius: 5px;
+    position: relative;
+    right: -5px;
+}
