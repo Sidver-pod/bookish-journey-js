@@ -1,40 +1,118 @@
+// /* Promise */
+// const Posts = [
+//     {title: 'Post One', body: 'This is post one'},
+//     {title: 'Post Two', body: 'This is post two'}
+// ];
+
+// function getPosts(){
+//     setTimeout(() => {
+//         let output = '';
+//         Posts.forEach((post) => {
+//             output += `<li>${post.title}</li>`;
+//         });
+//         document.getElementById('update').innerHTML = output;
+//     }, 1000);
+// }
+
+// function createPost(post){
+//     return new Promise((resolve, reject) => {
+//         setTimeout(() => {
+//             Posts.push(post);
+//             const error = false;
+//             if(!error){
+//                 resolve();
+//             } else {
+//                 reject('Error! Something went wrong.');
+//             }
+//         }, 2000);
+//     });
+// }
+
+// var clicked = 0; //checks whether user clicked the delete-button or not
+
+// createPost({title: 'Post Three', body: "This is post three"})
+//  .then(getPosts)
+//  .catch(message => console.log(message));
+
+//  function deletePost(click){
+//      return new Promise((resolve, reject) => {
+//          setTimeout(() => {
+//              if(click){
+//                  clicked = 0; //reset
+
+//                  //checking for whether there are any children at all to be deleted!
+//                  if(document.getElementById('update').children.length == 0){
+//                      reject("Array is empty now!");
+//                  } else {
+//                      //deleting the last child
+//                      resolve("Deleted the Nth child!");
+//                  }
+//              } else {
+//                  reject("Did not click the delete button!");
+//              }
+//          }, 1000);
+//      });
+//  }
+
+//  document.getElementById('del-butn').addEventListener('click', () => {
+//      clicked = 1;
+//      deletePost(clicked)
+//       .then((message) => {
+//           document.getElementById('update').lastElementChild.remove();
+//           console.log(message);
+//       })
+//       .catch(message => console.log(message));
+//  });
+
+//  //creating & then deleting a post
+//  createPost({title: 'Post Four', body: 'This is post four'})
+//   .then(() => {
+//       //#1 creating post
+//       getPosts();
+
+//       //#2 deleting post
+//       deletePost(1)
+//        .then((message) => {
+//            document.getElementById('update').lastElementChild.remove();
+//            console.log(message);
+//        })
+//        .catch(message => console.log(message));
+//   })
+//   .catch(message => console.log(message));
+
+/* Promise.all */
 var num = 0; //helps keep count of new posts as well as assign a new id!
 var newDiv; //global declaration
 function createPost(post){
-    return new Promise((resolve, reject) => {
-        //#0
-        num++; //updating count
-        newDiv = document.createElement('div');
-        newDiv.id = `post-${num}`;
-        
-        //#1
-        const postNum = `#${num} `;
-        const titleDiv = document.createElement('div');
-        titleDiv.id = `post-title`;
-        titleDiv.innerHTML = `<h2>${postNum + post.title}</h2><hr>`;
+    //#0
+    num++; //updating count
+    newDiv = document.createElement('div');
+    newDiv.id = `post-${num}`;
+    
+    //#1
+    const postNum = `#${num} `;
+    const titleDiv = document.createElement('div');
+    titleDiv.id = `post-title`;
+    titleDiv.innerHTML = `<h2>${postNum + post.title}</h2><hr>`;
 
-        //#2
-        const bodyDiv = document.createElement('div');
-        bodyDiv.id = `post-body`;
-        const para = document.createElement('p');
-        para.innerText = `${post.body}`;
-        bodyDiv.appendChild(para);
-        const hr = document.createElement('hr');
-        bodyDiv.appendChild(hr);
+    //#2
+    const bodyDiv = document.createElement('div');
+    bodyDiv.id = `post-body`;
+    const para = document.createElement('p');
+    para.innerText = `${post.body}`;
+    bodyDiv.appendChild(para);
+    const hr = document.createElement('hr');
+    bodyDiv.appendChild(hr);
 
-        //#3
-        const authorDiv = document.createElement('div');
-        authorDiv.id = `post-author`;
-        authorDiv.innerHTML = `<b>Post by: </b><i>${post.author}</i>`;
+    //#3
+    const authorDiv = document.createElement('div');
+    authorDiv.id = `post-author`;
+    authorDiv.innerHTML = `<b>Post by: </b><i>${post.author}</i>`;
 
-        //making the newly defined divisions the children of `newDiv`
-        newDiv.appendChild(titleDiv);
-        newDiv.appendChild(bodyDiv);
-        newDiv.appendChild(authorDiv);
-
-        resolve();
-        reject(`Can't Post`);
-    });
+    //making the newly defined divisions the children of `newDiv`
+    newDiv.appendChild(titleDiv);
+    newDiv.appendChild(bodyDiv);
+    newDiv.appendChild(authorDiv);
 }
 
 const newPost = {
@@ -80,29 +158,25 @@ var timerID;
 
 var newSpan; //global declaration
 function lastUpdatedAgo(){
-    return new Promise((resolve, reject) => {
-        if(timerID !== undefined){
-            clearInterval(timerID);
-            count = 0; //reset
-            document.getElementById('update').remove();
-        }
+    if(timerID !== undefined){
+        clearInterval(timerID);
+        count = 0; //reset
+        /* had to remove because of addition of `deletionPromise()` */
+        //document.getElementById('update').remove();
+    }
 
-        //creating a new `span` element
-        newSpan = document.createElement('span');
-        newSpan.id = `update`;
-        newSpan.className = `updt`;
-        const update = `Updated ${count}s ago.`;
-        newSpan.innerText = update;
+    //creating a new `span` element
+    newSpan = document.createElement('span');
+    newSpan.id = `update`;
+    newSpan.className = `updt`;
+    const update = `Updated ${count}s ago.`;
+    newSpan.innerText = update;
 
-        //setInterval will run again & again every `1000ms`
-        timerID = setInterval(()=>{
-            count++; //update
-            newSpan.innerText = `Updated ${count}s ago.`;
-        }, 1000);
-
-        resolve();
-        reject(`Can't Update!`);
-    });
+    //setInterval will run again & again every `1000ms`
+    timerID = setInterval(()=>{
+        count++; //update
+        newSpan.innerText = `Updated ${count}s ago.`;
+    }, 1000);
 }
 
 //lastUpdatedAgo();
@@ -118,8 +192,14 @@ Promise.all([createPost(newPost), lastUpdatedAgo(0)])
      document.body.appendChild(newDiv);
      /* IMPORTANT: the code right below this line should be executed in the `.then` of `promise.all` */
      document.getElementById(`post-1`).children[2].appendChild(newSpan);
- })
- .catch(message => console.log(message));
+
+     //prints onto the console!
+     console.log(`${document.getElementById(`post-1`).innerText}`);
+
+     //calling deletion Promise
+     deletionPromise()
+      .then(console.log(`Deleted Post-${delCount}`));
+ });
 
  /* mimicking a new post being uploaded after about 10 seconds! */
 setTimeout(()=>{
@@ -129,6 +209,25 @@ setTimeout(()=>{
          document.body.appendChild(newDiv);
          /* IMPORTANT: the code right below this line should be executed in the `.then` of `promise.all` */
          document.getElementById(`post-2`).children[2].appendChild(newSpan);   
+
+         //prints onto the console!
+         console.log(`${document.getElementById(`post-2`).innerText}`);
+
+        //calling deletion Promise
+        deletionPromise()
+         .then(console.log(`Deleted Post-${delCount}`));
      })
-     .catch(message => console.log(message));
 }, 10000);
+
+//initialisation
+var delCount = 0;
+
+//deletion promise
+function deletionPromise(){
+    return new Promise((resolve, reject) => {
+        delCount++; //update
+        const deletePost = document.getElementById(`post-${delCount}`);
+        deletePost.remove();
+        resolve();
+    });
+}
